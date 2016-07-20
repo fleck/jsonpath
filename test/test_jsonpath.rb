@@ -1,4 +1,4 @@
-class TestJsonpath < MiniTest::Test
+class TestJsonpath < MiniTest::Unit::TestCase
 
   def setup
     @object = example_object

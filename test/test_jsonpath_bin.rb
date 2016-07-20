@@ -1,4 +1,4 @@
-class TestJsonpathBin < MiniTest::Test
+class TestJsonpathBin < MiniTest::Unit::TestCase
   def setup
     @runner = 'ruby -Ilib bin/jsonpath'
     @original_dir = Dir.pwd
