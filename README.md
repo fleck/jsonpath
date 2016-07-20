@@ -1,3 +1,6 @@
+# Travis Build
+[![Build Status](https://travis-ci.org/Skarlso/jsonpath.svg?branch=master)](https://travis-ci.org/Skarlso/jsonpath)
+
 # JsonPath
 
 This is an implementation of http://goessner.net/articles/JsonPath/.
@@ -92,7 +95,7 @@ JsonPath.new('$..color').first(object)
 # => "red"
 ~~~~~
 
-As well, we can directly create an `Enumerable` at any time using `#[]`. 
+As well, we can directly create an `Enumerable` at any time using `#[]`.
 
 ~~~~~ {ruby}
 enum = JsonPath.new('$..color')[object]
