@@ -5,8 +5,7 @@ require 'jsonpath/enumerable'
 require 'jsonpath/version'
 
 class JsonPath
-
-  PATH_ALL = '$..*'
+  PATH_ALL = '$..*'.freeze
 
   attr_accessor :path
 
@@ -75,7 +74,7 @@ class JsonPath
   alias_method :[], :enum_on
 
   def self.on(obj_or_str, path, opts = nil)
-    self.new(path, opts).on(process_object(obj_or_str))
+    new(path, opts).on(process_object(obj_or_str))
   end
 
   def self.for(obj_or_str)
@@ -83,6 +82,7 @@ class JsonPath
   end
 
   private
+
   def self.process_object(obj_or_str)
     obj_or_str.is_a?(String) ? MultiJson.decode(obj_or_str) : obj_or_str
   end

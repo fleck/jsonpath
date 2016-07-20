@@ -21,7 +21,7 @@ class JsonPath
       when '@'
         each(context, key, pos + 1, &blk)
       when /^\[(.*)\]$/
-        expr[1,expr.size - 2].split(',').each do |sub_path|
+        expr[1, expr.size - 2].split(',').each do |sub_path|
           case sub_path[0]
           when ?', ?"
             if node.is_a?(Hash)
@@ -29,7 +29,7 @@ class JsonPath
               each(node, k, pos + 1, &blk) if node.key?(k)
             end
           when ??
-            raise "Cannot use ?(...) unless eval is enabled" unless allow_eval?
+            raise 'Cannot use ?(...) unless eval is enabled' unless allow_eval?
             case node
             when Array
               node.size.times do |index|
@@ -77,15 +77,16 @@ class JsonPath
         end
       end
 
-      if pos > 0 && @path[pos-1] == '..'
+      if pos > 0 && @path[pos - 1] == '..'
         case node
-        when Hash  then node.each {|k, v| each(node, k, pos, &blk) }
-        when Array then node.each_with_index {|n, i| each(node, i, pos, &blk) }
+        when Hash  then node.each { |k, _| each(node, k, pos, &blk) }
+        when Array then node.each_with_index { |_, i| each(node, i, pos, &blk) }
         end
       end
     end
 
     private
+
     def yield_value(blk, context, key)
       case @mode
       when nil
@@ -121,9 +122,11 @@ class JsonPath
         end
 
         # otherwise eval as is
-        # TODO: this eval is wrong, because hash accessor could be nil and nil cannot be compared with anything,
-        # for instance, @_current_node['price'] - we can't be sure that 'price' are in every node, but it's only in several nodes
-        # I wrapped this eval into rescue returning false when error, but this eval should be refactored.
+        # TODO: this eval is wrong, because hash accessor could be nil and nil
+        # cannot be compared with anything, for instance,
+        # @a_current_node['price'] - we can't be sure that 'price' are in every
+        # node, but it's only in several nodes I wrapped this eval into rescue
+        # returning false when error, but this eval should be refactored.
         begin
           eval(exp.gsub(/@/, '@_current_node'))
         rescue

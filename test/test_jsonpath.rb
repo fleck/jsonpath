@@ -1,4 +1,4 @@
-class TestJsonpath < MiniTest::Unit::TestCase
+class TestJsonpath < MiniTest::Test
 
   def setup
     @object = example_object
@@ -79,7 +79,7 @@ class TestJsonpath < MiniTest::Unit::TestCase
   end
 
   def test_path_with_hyphens
-     assert_equal [@object['store']['bicycle']['single-speed']], JsonPath.new('$.store.bicycle.single-speed').on(@object)
+    assert_equal [@object['store']['bicycle']['single-speed']], JsonPath.new('$.store.bicycle.single-speed').on(@object)
   end
 
   def test_paths_with_numbers
@@ -180,63 +180,56 @@ class TestJsonpath < MiniTest::Unit::TestCase
       }
     }
     assert_equal [{"type"=>"users", "id"=>"123"}], JsonPath.new("$.data[?(@.type == 'users')]").on(data)
-    assert_equal []     , JsonPath.new("$.data[?(@.type == 'admins')]").on(data)
+    assert_equal [], JsonPath.new("$.data[?(@.type == 'admins')]").on(data)
   end
 
   def example_object
-    { "store"=> {
-      "book" => [
-        { "category"=> "reference",
-          "author"=> "Nigel Rees",
-          "title"=> "Sayings of the Century",
-          "price"=> 9
-        },
-        { "category"=> "fiction",
-          "author"=> "Evelyn Waugh",
-          "title"=> "Sword of Honour",
-          "price"=> 13
-        },
-        { "category"=> "fiction",
-          "author"=> "Herman Melville",
-          "title"=> "Moby Dick",
-          "isbn"=> "0-553-21311-3",
-          "price"=> 9
-        },
-        { "category"=> "fiction",
-          "author"=> "J. R. R. Tolkien",
-          "title"=> "The Lord of the Rings",
-          "isbn"=> "0-395-19395-8",
-          "price"=> 23
-        },
-        { "category"=> "russian_fiction",
-          "author"=> "Lukyanenko",
-          "title"=> "Imperatory Illuziy",
-          "written" => {
-              "year" => 1995
-          }
-        },
-        { "category"=> "russian_fiction",
-          "author"=> "Lukyanenko",
-          "title"=> "Osennie Vizity",
-          "written" => {
-              "year" => 1996
-          }
-        },
-        { "category"=> "russian_fiction",
-          "author"=> "Lukyanenko",
-          "title"=> "Ne vremya dlya drakonov",
-          "written" => {
-              "year" => 1997
-          }
-        }
+    { 'store' => {
+      'book' => [
+        { 'category' => 'reference',
+          'author' => 'Nigel Rees',
+          'title' => 'Sayings of the Century',
+          'price' => 9 },
+        { 'category' => 'fiction',
+          'author' => 'Evelyn Waugh',
+          'title' => 'Sword of Honour',
+          'price' => 13 },
+        { 'category' => 'fiction',
+          'author' => 'Herman Melville',
+          'title' => 'Moby Dick',
+          'isbn' => '0-553-21311-3',
+          'price' => 9 },
+        { 'category' => 'fiction',
+          'author' => 'J. R. R. Tolkien',
+          'title' => 'The Lord of the Rings',
+          'isbn' => '0-395-19395-8',
+          'price' => 23 },
+        { 'category' => 'russian_fiction',
+          'author' => 'Lukyanenko',
+          'title' => 'Imperatory Illuziy',
+          'written' => {
+            'year' => 1995
+          } },
+        { 'category' => 'russian_fiction',
+          'author' => 'Lukyanenko',
+          'title' => 'Osennie Vizity',
+          'written' => {
+            'year' => 1996
+          } },
+        { 'category' => 'russian_fiction',
+          'author' => 'Lukyanenko',
+          'title' => 'Ne vremya dlya drakonov',
+          'written' => {
+            'year' => 1997
+          } }
       ],
-    "bicycle"=> {
-      "color"=> "red",
-      "price"=> 20,
-      "catalogue_number" => 12345,
-      "single-speed" => "no",
-      "2seater" => "yes"}
+      'bicycle' => {
+        'color' => 'red',
+        'price' => 20,
+        'catalogue_number' => 123_45,
+        'single-speed' => 'no',
+        '2seater' => 'yes'
+      }
     } }
   end
-
 end

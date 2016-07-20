@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/Skarlso/jsonpath'
   s.rdoc_options = ['--charset=UTF-8']
   s.require_paths = ['lib']
-  s.rubygems_version = '1.3.7'
+  s.rubygems_version = '2.6.6'
   s.test_files = `git ls-files`.split("\n").select { |f| f =~ /^spec/ }
   s.rubyforge_project = 'jsonpath'
   s.executables = `git ls-files -- bin/*`.split("\n")
@@ -24,10 +24,10 @@ Gem::Specification.new do |s|
   s.licenses    = ['MIT']
 
   # dependencies
-  s.add_runtime_dependency 'multi_json'
-  s.add_development_dependency 'code_stats'
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'minitest', '~> 2.2.0'
-  s.add_development_dependency 'phocus'
-  s.add_development_dependency 'bundler'
+  s.add_runtime_dependency 'multi_json', '~> 0'
+  s.add_development_dependency 'code_stats', '~> 0'
+  s.add_development_dependency 'rake', '~> 0'
+  s.add_development_dependency 'minitest', '~> 2.2', '>= 2.2.0'
+  s.add_development_dependency 'phocus', '~> 0'
+  s.add_development_dependency 'bundler', '~> 0'
 end
