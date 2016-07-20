@@ -14,7 +14,7 @@ class JsonPath
     @opts = opts
     scanner = StringScanner.new(path)
     @path = []
-    while not scanner.eos?
+    until scanner.eos?
       if token = scanner.scan(/\$/)
         @path << token
       elsif token = scanner.scan(/@/)
@@ -25,7 +25,7 @@ class JsonPath
         @path << "[#{token}]"
       elsif token = scanner.scan(/\[/)
         count = 1
-        while !count.zero?
+        until count.zero?
           if t = scanner.scan(/\[/)
             token << t
             count += 1
