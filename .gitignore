@@ -3,3 +3,5 @@ Gemfile.lock
 coverage/*
 doc/*
 .yardoc
+.tags
+.gitignore
