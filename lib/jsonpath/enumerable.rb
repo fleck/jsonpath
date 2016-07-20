@@ -5,8 +5,15 @@ class JsonPath
     alias_method :allow_eval?, :allow_eval
 
     def initialize(path, object, mode, options = nil)
-      @path, @object, @mode, @options = path.path, object, mode, options
-      @allow_eval = @options && @options.key?(:allow_eval) ? @options[:allow_eval] : true
+      @path = path.path
+      @object = object
+      @mode = mode
+      @options = options
+      @allow_eval = if @options && @options.key?(:allow_eval)
+                      @options[:allow_eval]
+                    else
+                      true
+                    end
     end
 
     def each(context = @object, key = nil, pos = 0, &blk)
@@ -14,18 +21,16 @@ class JsonPath
       @_current_node = node
       return yield_value(blk, context, key) if pos == @path.size
       case expr = @path[pos]
-      when '*', '..'
+      when '*', '..', '@'
         each(context, key, pos + 1, &blk)
       when '$'
         each(context, key, pos + 1, &blk) if node == @object
-      when '@'
-        each(context, key, pos + 1, &blk)
       when /^\[(.*)\]$/
         expr[1, expr.size - 2].split(',').each do |sub_path|
           case sub_path[0]
           when ?', ?"
             if node.is_a?(Hash)
-              k = sub_path[1,sub_path.size - 2]
+              k = sub_path[1, sub_path.size - 2]
               each(node, k, pos + 1, &blk) if node.key?(k)
             end
           when ??
@@ -105,37 +110,37 @@ class JsonPath
     end
 
     def process_function_or_literal(exp, default = nil)
-      if exp.nil?
-        default
-      elsif exp[0] == ?(
-        return nil unless allow_eval? && @_current_node
-        identifiers = /@?(\.(\w+))+/.match(exp)
+      return default if exp.nil? || exp.empty?
+      return Integer(exp) if exp[0] != '('
+      return nil unless allow_eval? && @_current_node
 
-        if !identifiers.nil? && !@_current_node.methods.include?(identifiers[2].to_sym)
-          exp_to_eval = exp.dup
-          exp_to_eval[identifiers[0]] = identifiers[0].split('.').map{|el| el == '@' ? '@_current_node' : "['#{el}']"}.join
-          begin
-            return eval(exp_to_eval)
-          rescue StandardError # if eval failed because of bad arguments or missing methods
-            return default
-          end
-        end
+      identifiers = /@?(\.(\w+))+/.match(exp)
 
-        # otherwise eval as is
-        # TODO: this eval is wrong, because hash accessor could be nil and nil
-        # cannot be compared with anything, for instance,
-        # @a_current_node['price'] - we can't be sure that 'price' are in every
-        # node, but it's only in several nodes I wrapped this eval into rescue
-        # returning false when error, but this eval should be refactored.
+      if !identifiers.nil? &&
+         !@_current_node.methods.include?(identifiers[2].to_sym)
+
+        exp_to_eval = exp.dup
+        exp_to_eval[identifiers[0]] = identifiers[0].split('.').map do |el|
+          el == '@' ? '@_current_node' : "['#{el}']"
+        end.join
+
         begin
-          eval(exp.gsub(/@/, '@_current_node'))
-        rescue
-          false
+          return eval(exp_to_eval)
+          # if eval failed because of bad arguments or missing methods
+        rescue StandardError
+          return default
         end
-      elsif exp.empty?
-        default
-      else
-        Integer(exp)
+      end
+      # otherwise eval as is
+      # TODO: this eval is wrong, because hash accessor could be nil and nil
+      # cannot be compared with anything, for instance,
+      # @a_current_node['price'] - we can't be sure that 'price' are in every
+      # node, but it's only in several nodes I wrapped this eval into rescue
+      # returning false when error, but this eval should be refactored.
+      begin
+        eval(exp.gsub(/@/, '@_current_node'))
+      rescue
+        false
       end
     end
   end
