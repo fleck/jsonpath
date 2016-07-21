@@ -28,7 +28,7 @@ class JsonPath
       when /^\[(.*)\]$/
         expr[1, expr.size - 2].split(',').each do |sub_path|
           case sub_path[0]
-          when ?', ?"
+          when '\'', '"'
             if node.is_a?(Hash)
               k = sub_path[1, sub_path.size - 2]
               each(node, k, pos + 1, &blk) if node.key?(k)
