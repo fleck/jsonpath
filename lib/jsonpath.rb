@@ -10,8 +10,6 @@ class JsonPath
   attr_accessor :path
 
   def initialize(path, opts = nil)
-    # puts "===========BEGIN==============\n"
-    # puts "Input: #{path}"
     @opts = opts
     scanner = StringScanner.new(path)
     @path = []
@@ -34,8 +32,6 @@ class JsonPath
         @path.last << token
       end
     end
-    # p @path
-    # puts "===========END==============\n"
   end
 
   def find_matching_brackets(token, scanner)
