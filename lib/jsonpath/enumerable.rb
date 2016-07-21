@@ -33,7 +33,7 @@ class JsonPath
               k = sub_path[1, sub_path.size - 2]
               each(node, k, pos + 1, &blk) if node.key?(k)
             end
-          when ??
+          when '?'
             raise 'Cannot use ?(...) unless eval is enabled' unless allow_eval?
             case node
             when Array
@@ -54,7 +54,7 @@ class JsonPath
             if node.is_a?(Array)
               next if node.empty?
               array_args = sub_path.split(':')
-              if array_args[0] == ?*
+              if array_args[0] == '*'
                 start_idx = 0
                 end_idx = node.size - 1
               else
@@ -70,7 +70,7 @@ class JsonPath
               end_idx %= node.size
               step = process_function_or_literal(array_args[2], 1)
               next unless step
-              (start_idx..end_idx).step(step) {|i| each(node, i, pos + 1, &blk)}
+              (start_idx..end_idx).step(step) { |i| each(node, i, pos + 1, &blk) }
             end
           end
         end

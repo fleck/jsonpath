@@ -10,48 +10,50 @@ class JsonPath
   attr_accessor :path
 
   def initialize(path, opts = nil)
+    # puts "===========BEGIN==============\n"
+    # puts "Input: #{path}"
     @opts = opts
     scanner = StringScanner.new(path)
     @path = []
     until scanner.eos?
-      if token = scanner.scan(/\$/)
+      if token = scanner.scan(/\$|@|\*|\.\./)
         @path << token
-      elsif token = scanner.scan(/@/)
-        @path << token
-      elsif token = scanner.scan(/[a-zA-Z0-9_-]+/)
+      elsif token = scanner.scan(/[\w-]+/)
         @path << "['#{token}']"
       elsif token = scanner.scan(/'(.*?)'/)
         @path << "[#{token}]"
       elsif token = scanner.scan(/\[/)
-        count = 1
-        until count.zero?
-          if t = scanner.scan(/\[/)
-            token << t
-            count += 1
-          elsif t = scanner.scan(/\]/)
-            token << t
-            count -= 1
-          elsif t = scanner.scan(/[^\[\]]+/)
-            token << t
-          elsif scanner.eos?
-            raise ArgumentError, 'unclosed bracket'
-          end
-        end
-        @path << token
+        @path << find_matching_brackets(token, scanner)
       elsif token = scanner.scan(/\]/)
         raise ArgumentError, 'unmatched closing bracket'
-      elsif token = scanner.scan(/\.\./)
-        @path << token
       elsif scanner.scan(/\./)
         nil
-      elsif token = scanner.scan(/\*/)
-        @path << token
       elsif token = scanner.scan(/[><=] \d+/)
         @path.last << token
       elsif token = scanner.scan(/./)
         @path.last << token
       end
     end
+    # p @path
+    # puts "===========END==============\n"
+  end
+
+  def find_matching_brackets(token, scanner)
+    count = 1
+    until count.zero?
+      if t = scanner.scan(/\[/)
+        token << t
+        count += 1
+      elsif t = scanner.scan(/\]/)
+        token << t
+        count -= 1
+      elsif t = scanner.scan(/[^\[\]]+/)
+        token << t
+      elsif scanner.eos?
+        raise ArgumentError, 'unclosed bracket'
+      end
+    end
+    token
   end
 
   def join(join_path)

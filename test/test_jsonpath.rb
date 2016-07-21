@@ -12,6 +12,7 @@ class TestJsonpath < MiniTest::Unit::TestCase
     assert_raises(ArgumentError) {
       JsonPath.new('$.store.book[0]]')
     }
+    assert_equal [9], JsonPath.new('$.store.book[0].price').on(@object)
   end
 
   def test_lookup_direct_path
