@@ -184,6 +184,10 @@ class TestJsonpath < MiniTest::Unit::TestCase
     assert_equal [], JsonPath.new("$.data[?(@.type == 'admins')]").on(data)
   end
 
+  def test_wildcard_asterisk_supported_on_intermediate_elements
+    assert_equal ['red'], JsonPath.new("$.store.*.color").on(@object)
+  end
+
   def example_object
     { 'store' => {
       'book' => [
